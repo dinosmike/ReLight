@@ -67,7 +67,7 @@ public sealed class TrayService : IDisposable
         {
             var m = mode;
             var item = Item(Loc.T("mode." + mode), () => ModeRequested?.Invoke(m));
-            item.Icon = ModeIcon(mode);
+            item.Icon = ModeIcons.Make(ModeIcons.Glyph(mode)); // pale, so the green tick of the current mode stands out
             item.Padding = new Thickness(16, 7, 32, 7); // modes stand indented under the power item
             item.IsChecked = _settings.Mode == mode; // the tick replaces the icon of the current mode
             menu.Items.Add(item);
@@ -80,28 +80,6 @@ public sealed class TrayService : IDisposable
         SetForegroundWindow(hwnd);
         menu.Placement = PlacementMode.MousePoint;
         menu.IsOpen = true;
-    }
-
-    /// <summary>The same glyphs as on the mode tabs of the main window.</summary>
-    static TextBlock ModeIcon(LightMode mode)
-    {
-        var icon = new TextBlock
-        {
-            Text = mode switch
-            {
-                LightMode.Screen => "",
-                LightMode.Color => "",
-                LightMode.Rainbow => "",
-                LightMode.Music => "",
-                LightMode.Cinema => "",
-                _ => "",
-            },
-            FontSize = 12,
-            FontFamily = new FontFamily("Segoe Fluent Icons, Segoe MDL2 Assets"),
-        };
-        icon.SetResourceReference(TextBlock.ForegroundProperty, "Rl.Text.Muted");
-        icon.Opacity = 0.6; // pale, so the green tick of the current mode stands out
-        return icon;
     }
 
     static MenuItem Item(string text, Action onClick)

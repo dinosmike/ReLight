@@ -62,9 +62,8 @@ public sealed class MicOptions
     /// <summary>Silence threshold: 0 = -70 dB (hears everything) .. 100 = -20 dB (only loud sounds).</summary>
     public int Gate { get; set; } = 30;
 
-    /// <summary>A soft glow from the overall noise above the threshold; off by default so silence is black.</summary>
-    public bool Glow { get; set; }
-    public int GlowLevel { get; set; } = 25;
+    /// <summary>The threshold follows the room noise by itself (<see cref="SilenceGate"/>); <see cref="Gate"/> is then only the start.</summary>
+    public bool AutoGate { get; set; } = true;
 
     public bool Voice { get; set; } = true;
     public int VoiceLowHue { get; set; } = 15;
@@ -190,16 +189,16 @@ public sealed class AppSettings
     public List<ExclusionRule> Exclusions { get; set; } = [];
 
     public bool AutoUnity { get; set; }
-    public ExclusionAction UnityAction { get; set; } = ExclusionAction.Rainbow;
-    public string? UnityColor { get; set; }
+    public ExclusionAction UnityAction { get; set; } = ExclusionAction.Color;
+    public string? UnityColor { get; set; } = "#FF2D95";
     public string? UnityEffect { get; set; }
     public bool AutoUnreal { get; set; }
-    public ExclusionAction UnrealAction { get; set; } = ExclusionAction.Rainbow;
-    public string? UnrealColor { get; set; }
+    public ExclusionAction UnrealAction { get; set; } = ExclusionAction.Color;
+    public string? UnrealColor { get; set; } = "#00FF40";
     public string? UnrealEffect { get; set; }
 
-    /// <summary>Known video players switch the light while their window is in front (cinema by default).</summary>
-    public bool AutoPlayers { get; set; } = true;
+    /// <summary>Known video players switch the light while their window is in front; off until switched on.</summary>
+    public bool AutoPlayers { get; set; }
     public ExclusionAction PlayersAction { get; set; } = ExclusionAction.Cinema;
     public string? PlayersColor { get; set; }
     public string? PlayersEffect { get; set; }

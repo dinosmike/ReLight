@@ -58,6 +58,8 @@ public partial class MainWindow : Window
         CinemaSoundSlider.Value = _settings.CinemaSound;
         CinemaBarsToggle.IsChecked = _settings.CinemaBars;
         MicSlider.Value = _settings.MicSensitivity;
+        GateSlider.Value = _settings.Mic.Gate;
+        AutoGateBox.IsChecked = _settings.Mic.AutoGate;
         _micTimer.Tick += (_, _) => UpdateMicMeter();
         PowerToggle.IsChecked = _settings.LightOn;
         BuildSwatches();
@@ -92,11 +94,7 @@ public partial class MainWindow : Window
 
         _tray = new TrayService(this, _settings);
         _tray.OpenRequested += ShowFromTray;
-        _tray.SettingsRequested += () =>
-        {
-            ShowFromTray(); // the settings window opens over the main window
-            Settings_Click(this, new RoutedEventArgs());
-        };
+        _tray.SettingsRequested += () => Settings_Click(this, new RoutedEventArgs()); // alone, the main window stays hidden
         _tray.ExitRequested += ExitApp;
         _tray.ToggleRequested += () => SetLight(!_settings.LightOn);
         _tray.ModeRequested += SetMode;
@@ -349,6 +347,7 @@ public partial class MainWindow : Window
         SaturationValue.Text = $"{_settings.Saturation}%";
         MusicValue.Text = $"{_settings.MusicSensitivity}%";
         MicValue.Text = $"{_settings.MicSensitivity}%";
+        ShowGate();
         CinemaSmoothValue.Text = $"{_settings.CinemaSmoothing}%";
         CinemaDepthValue.Text = $"{_settings.CinemaDepth}%";
         CinemaSoundValue.Text = $"{_settings.CinemaSound}%";
@@ -406,6 +405,46 @@ public partial class MainWindow : Window
         _settings.Save();
     }
 
+    void Gate_Changed(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (_settings.Mic.AutoGate) return; // the slider only shows the automatic threshold then
+        SetValue(v => _settings.Mic.Gate = v, e.NewValue);
+    }
+
+    void AutoGate_Click(object sender, RoutedEventArgs e)
+    {
+        bool auto = AutoGateBox.IsChecked == true;
+        // Switching to manual keeps the threshold where the automatic one had put it.
+        if (!auto) _settings.Mic.Gate = GateFromDb(_engine.MicGateDb);
+        _settings.Mic.AutoGate = auto;
+        _settings.Save();
+        if (!auto)
+        {
+            _loading = true;
+            GateSlider.Value = _settings.Mic.Gate;
+            _loading = false;
+        }
+        ShowGate();
+    }
+
+    static int GateFromDb(double db) => (int)Math.Clamp(Math.Round((db + 70) * 2), 0, 100);
+
+    /// <summary>Threshold slider and its value; with the automatic threshold it follows the engine and is locked.</summary>
+    void ShowGate()
+    {
+        bool auto = _settings.Mic.AutoGate;
+        double db = _engine.MicGateDb;
+        GateSlider.IsEnabled = !auto;
+        if (auto)
+        {
+            bool was = _loading;
+            _loading = true;
+            GateSlider.Value = GateFromDb(db);
+            _loading = was;
+        }
+        GateValue.Text = $"{db:0} dB";
+    }
+
     void Mic_Changed(object sender, SelectionChangedEventArgs e)
     {
         if (_loading || MicBox.SelectedIndex < 0) return;
@@ -415,8 +454,16 @@ public partial class MainWindow : Window
     }
 
     /// <summary>Live loudness bar, so it is visible that the microphone hears.</summary>
-    void UpdateMicMeter() =>
-        MicMeter.Width = Math.Max(0, MicTrack.ActualWidth * Math.Clamp(_engine.MicLevel, 0, 1));
+    void UpdateMicMeter()
+    {
+        double w = MicTrack.ActualWidth, level = Math.Clamp(_engine.MicLevel, 0, 1);
+        double gate = _engine.MicGateDb;
+        MicMeter.Width = Math.Max(0, w * level);
+        // Gray below the threshold (the strip is dark), accent above it. Both on the -70..-10 dB scale.
+        MicMeter.SetResourceReference(Border.BackgroundProperty, level * 60 - 70 >= gate ? "Rl.Accent" : "Rl.Text.Muted");
+        GateMark.Margin = new Thickness(Math.Max(0, w * (gate + 70) / 60 - 1), 0, 0, 0);
+        if (_settings.Mic.AutoGate) ShowGate();
+    }
 
     void SetValue(Action<int> apply, double value)
     {
@@ -519,7 +566,7 @@ public partial class MainWindow : Window
                 if (found?.Action != _engine.Exclusion?.Action || found?.Program != _engine.Exclusion?.Program
                     || found?.Color != _engine.Exclusion?.Color || found?.Effect != _engine.Exclusion?.Effect)
                     _engine.Exclusion = found;
-                ExclusionStatus.Text = found == null ? "" : Loc.T("ex.active", found.Program, Loc.T("exa." + found.Action));
+                ExclusionStatus.Text = found == null ? "" : Loc.T("ex.active", found.Program, Loc.T(found.Action == ExclusionAction.Off ? "exa.Off" : "mode." + found.Action));
                 ExclusionStatus.Visibility = found == null ? Visibility.Collapsed : Visibility.Visible;
             } while (_scanAgain);
         }
@@ -826,10 +873,24 @@ public partial class MainWindow : Window
         Loc.SetLanguage(lang);
     }
 
+    SettingsWindow? _settingsWindow;
+
     void Settings_Click(object sender, RoutedEventArgs e)
     {
+        if (_settingsWindow != null) { _settingsWindow.Activate(); return; } // already open (from the tray again)
         _hotkeys?.Clear(); // otherwise Windows swallows the shortcut being recorded
-        var window = new SettingsWindow(_settings) { Owner = this };
+        var window = new SettingsWindow(_settings);
+        // Over the main window when it is on screen; from the tray with the window hidden, on its own.
+        bool alone = !IsVisible || WindowState == WindowState.Minimized;
+        if (alone)
+        {
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.ShowInTaskbar = true;
+        }
+        else
+            window.Owner = this;
+        _settingsWindow = window;
+        window.Closed += (_, _) => _settingsWindow = null;
         // Each change works at once; Cancel calls this again with the old values.
         // Frame rate, capture depth and color order are read by the engine on every frame by themselves.
         string theme = _settings.Theme, language = _settings.Language;
@@ -853,7 +914,7 @@ public partial class MainWindow : Window
         }
         var failed = ApplyHotkeys();
         if (failed.Count > 0)
-            MessageWindow.Show(this, string.Join("\n", failed.Select(f => Loc.T("hk.busy", f))), MessageKind.Warning);
+            MessageWindow.Show(alone ? null : this, string.Join("\n", failed.Select(f => Loc.T("hk.busy", f))), MessageKind.Warning);
     }
 
     void About_Click(object sender, RoutedEventArgs e) => AboutWindow.ShowFor(this);

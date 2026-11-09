@@ -289,6 +289,19 @@
                                     <Slider x:Name="MicSlider" Grid.Column="1" Minimum="0" Maximum="100" VerticalAlignment="Center" ValueChanged="MicSens_Changed"/>
                                     <TextBlock x:Name="MicValue" Grid.Column="2" TextAlignment="Right" VerticalAlignment="Center"/>
                                 </Grid>
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" SharedSizeGroup="ModeLabel"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="46"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Style="{StaticResource Rl.FieldLabel}" Text="{DynamicResource Loc.micset.gate}"/>
+                                    <Slider x:Name="GateSlider" Grid.Column="1" Minimum="0" Maximum="100" VerticalAlignment="Center" ValueChanged="Gate_Changed"
+                                            ToolTip="{DynamicResource Loc.micset.gate.hint}"/>
+                                    <TextBlock x:Name="GateValue" Grid.Column="2" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                                <CheckBox x:Name="AutoGateBox" Margin="0,0,0,10" HorizontalAlignment="Left" Content="{DynamicResource Loc.mic.autogate}"
+                                          ToolTip="{DynamicResource Loc.mic.autogate.tip}" Click="AutoGate_Click"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" SharedSizeGroup="ModeLabel"/>
@@ -296,9 +309,12 @@
                                         <ColumnDefinition Width="46"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Style="{StaticResource Rl.FieldLabel}" Text="{DynamicResource Loc.mic.level}"/>
-                                    <Border x:Name="MicTrack" Grid.Column="1" Height="8" CornerRadius="4" Background="{DynamicResource Rl.Track}" VerticalAlignment="Center">
-                                        <Border x:Name="MicMeter" Width="0" HorizontalAlignment="Left" CornerRadius="4" Background="{DynamicResource Rl.Accent}"/>
-                                    </Border>
+                                    <Grid x:Name="MicTrack" Grid.Column="1" Height="14" VerticalAlignment="Center">
+                                        <Border Height="8" CornerRadius="4" Background="{DynamicResource Rl.Track}"/>
+                                        <Border x:Name="MicMeter" Height="8" Width="0" HorizontalAlignment="Left" CornerRadius="4" Background="{DynamicResource Rl.Accent}"/>
+                                        <!-- Порог тишины: всё левее отметки лента считает тишиной -->
+                                        <Border x:Name="GateMark" Width="2" HorizontalAlignment="Left" Background="{DynamicResource Rl.Status.Warn}"/>
+                                    </Grid>
                                 </Grid>
                                 <TextBlock x:Name="MicError" Visibility="Collapsed" TextWrapping="Wrap" Margin="0,10,0,0"
                                            Foreground="{DynamicResource Rl.Status.Bad}"/>

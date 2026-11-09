@@ -41,6 +41,11 @@ public sealed class LightEngine : IDisposable
     /// <summary>Microphone mode: absolute loudness heard right now, 0 = -70 dB .. 1 = -10 dB, for the meters.</summary>
     public float MicLevel { get; private set; }
 
+    /// <summary>Microphone mode: the silence threshold in use now, dBFS (moves by itself with the automatic one).</summary>
+    public double MicGateDb => _settings.Mic.AutoGate ? _silence.GateDb : _settings.Mic.GateDb;
+
+    readonly SilenceGate _silence = new(-55);
+
     readonly LetterboxDetector _bars = new();
     readonly CinemaSound _cinemaSound = new();
     int _samplerDepth = -1;
@@ -69,6 +74,7 @@ public sealed class LightEngine : IDisposable
     public LightEngine(AppSettings settings, AdalightDevice device)
     {
         _settings = settings;
+        _silence.Reset(settings.Mic.GateDb); // the automatic threshold starts from the last manual one
         _device = device;
         Effects = new EffectPlayer(settings);
     }
@@ -188,6 +194,7 @@ public sealed class LightEngine : IDisposable
                 excludedDark = false;
                 mode = excluded.Action switch
                 {
+                    ExclusionAction.Screen => LightMode.Screen,
                     ExclusionAction.Color => LightMode.Color,
                     ExclusionAction.Music => LightMode.Music,
                     ExclusionAction.Mic => LightMode.Mic,
@@ -208,6 +215,7 @@ public sealed class LightEngine : IDisposable
                 {
                     try { audio = mode == LightMode.Mic ? AudioAnalyzer.ForMicrophone(_settings.MicDevice) : new AudioAnalyzer(); }
                     catch (Exception ex) { AudioError = ex.Message; }
+                    if (mode == LightMode.Mic) _silence.Reset(_settings.Mic.GateDb); // a new microphone: learn its room again
                 }
             }
 
@@ -251,8 +259,10 @@ public sealed class LightEngine : IDisposable
                     break;
                 case LightMode.Mic:
                     var micOptions = _settings.Mic;
-                    var sound = audio?.ReadFeatures(_settings.MicSensitivity, micOptions.GateDb) ?? default;
+                    double gate = micOptions.AutoGate ? _silence.GateDb : micOptions.GateDb;
+                    var sound = audio?.ReadFeatures(_settings.MicSensitivity, gate) ?? default;
                     MicLevel = sound.Loudness;
+                    if (audio != null && micOptions.AutoGate) _silence.Update(sound.Loudness * 60 - 70, dt); // the loudness already measured, nothing extra
                     _mic.Render(effectFrame!, sound, micOptions, dt, effectColors);
                     for (int i = 0; i < layout.Count; i++) target[i] = effectColors[i].ToColor();
                     Copy(target, current);

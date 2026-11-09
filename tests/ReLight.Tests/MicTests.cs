@@ -1,4 +1,4 @@
-using ReLight.Audio;
+﻿using ReLight.Audio;
 using ReLight.Core;
 using ReLight.Core.Effects;
 
@@ -70,13 +70,36 @@ public class MicTests
     }
 
     [Fact]
-    public void Glow_OnlyWhenSwitchedOn()
+    public void AutoGate_SitsAboveTheRoomNoise()
     {
-        var sound = new SoundFeatures(0.7f, 0, 0.5f, 0);
-        var off = Run(new MicVisualizer(), new MicOptions { Voice = false }, sound, 10);
-        var on = Run(new MicVisualizer(), new MicOptions { Voice = false, Glow = true, GlowLevel = 60 }, sound, 10);
-        Assert.Equal(0f, Brightness(off));
-        Assert.True(Brightness(on) > 1);
+        // A room at -58 dB with speech at -25 dB now and then: the threshold ends up just above the noise.
+        var gate = new SilenceGate(-45);
+        var random = new Random(1);
+        for (int i = 0; i < 50 * 12; i++)
+        {
+            bool speaking = i % 100 < 40;
+            gate.Update(speaking ? -25 + random.NextDouble() * 5 : -58 + random.NextDouble() * 2, 0.02);
+        }
+        Assert.InRange(gate.GateDb, -54, -48);
+    }
+
+    [Fact]
+    public void AutoGate_FollowsALouderRoom()
+    {
+        var gate = new SilenceGate(-60);
+        for (int i = 0; i < 50 * 10; i++) gate.Update(-60, 0.02);
+        double quiet = gate.GateDb;
+        for (int i = 0; i < 50 * 12; i++) gate.Update(-40, 0.02); // a fan was switched on
+        Assert.InRange(quiet, -55, -53);
+        Assert.InRange(gate.GateDb, -35, -33);
+    }
+
+    [Fact]
+    public void AutoGate_StaysInTheSliderRange()
+    {
+        var gate = new SilenceGate(-50);
+        for (int i = 0; i < 50 * 12; i++) gate.Update(-120, 0.02); // digital silence
+        Assert.Equal(SilenceGate.MinDb, gate.GateDb, 1);
     }
 
     [Fact]

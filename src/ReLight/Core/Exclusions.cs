@@ -6,7 +6,8 @@ using System.Text;
 namespace ReLight.Core;
 
 /// <summary>What the light does instead of screen capture while an excluded program runs.</summary>
-public enum ExclusionAction { Off, Color, Rainbow, Music, Cinema, Mic }
+/// <summary>What an exclusion switches to: off, or one of the modes in the order of <see cref="LightMode"/>.</summary>
+public enum ExclusionAction { Off, Screen, Color, Rainbow, Music, Cinema, Mic }
 
 /// <summary>A program that switches the screen mode to something else while it runs.</summary>
 public sealed class ExclusionRule

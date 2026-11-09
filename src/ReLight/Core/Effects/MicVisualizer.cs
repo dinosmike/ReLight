@@ -1,12 +1,11 @@
-using ReLight.Audio;
+﻿using ReLight.Audio;
 
 namespace ReLight.Core.Effects;
 
 /// <summary>
 /// Microphone mode picture, three layers mixed together:
 /// voice waves rising from the bottom centre up both sides, colored by the pitch;
-/// rings of light that burst out from claps, knocks and other sudden sounds;
-/// and, if wanted, a soft glow from the overall noise. Silence is black.
+/// and rings of light that burst out from claps, knocks and other sudden sounds. Silence is black.
 /// </summary>
 public sealed class MicVisualizer
 {
@@ -24,13 +23,11 @@ public sealed class MicVisualizer
     float[] _distance = [];                          // distance of each LED from the bottom centre, 0..1
     float _bottomCenter;
     double _trailCarry;
-    float _hue, _glow;
 
     public void Render(EffectFrame f, SoundFeatures s, MicOptions o, double seconds, Span<Rgb> output)
     {
         if (_distance.Length != f.Count) Prepare(f);
         float dt = (float)seconds;
-        _hue = (float)EffectMath.Frac(_hue + seconds * (0.02 + s.Level * 0.08));
         // Afterglow 0..100: how slowly light fades once the sound is gone.
         float fade = 0.6f + (100 - Math.Clamp(o.Afterglow, 0, 100)) / 100f * 3.4f;
 
@@ -72,15 +69,9 @@ public sealed class MicVisualizer
         }
         _rings.RemoveAll(r => r.Strength <= 0 || r.Radius > 0.6f);
 
-        // Glow follows the loudness and fades with the afterglow; with the option off it stays black.
-        float glowTarget = o.Glow ? s.Level * Math.Clamp(o.GlowLevel, 0, 100) / 100f : 0;
-        _glow = glowTarget > _glow ? glowTarget : MathF.Max(glowTarget, _glow - dt * fade * 0.3f);
-        var glow = Hsv(_hue, 0.8f, _glow);
-
         for (int i = 0; i < f.Count; i++)
         {
-            var c = glow;
-            c = c.Max(_trail[(int)(_distance[i] * (TrailLength - 1))]);
+            var c = _trail[(int)(_distance[i] * (TrailLength - 1))];
             foreach (var r in _rings)
             {
                 float d = MathF.Abs(f.Pos[i] - r.Center);

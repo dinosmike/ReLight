@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using ReLight.Controls;
 using ReLight.Core;
 using ReLight.Core.Effects;
+using ReLight.Services;
 
 namespace ReLight;
 
@@ -97,6 +98,19 @@ public partial class ExclusionsWindow : Window
 
     void Engine_Click(object sender, RoutedEventArgs e) => Apply();
 
+    /// <summary>A mode is shown as on the main window's tab and in the tray: its icon and its name.</summary>
+    static StackPanel ActionItem(ExclusionAction a)
+    {
+        bool off = a == ExclusionAction.Off;
+        var icon = ModeIcons.Make(off ? ModeIcons.Off : ModeIcons.Glyph(Enum.Parse<LightMode>(a.ToString())));
+        icon.Width = 18;
+        icon.Margin = new Thickness(0, 1, 6, 0);
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        panel.Children.Add(icon);
+        panel.Children.Add(new TextBlock { Text = Loc.T(off ? "exa.Off" : "mode." + a), VerticalAlignment = VerticalAlignment.Center });
+        return panel;
+    }
+
     static ExclusionRule Copy(ExclusionRule r) =>
         new() { Exe = r.Exe, Path = r.Path, Action = r.Action, Color = r.Color, Effect = r.Effect };
 
@@ -107,7 +121,7 @@ public partial class ExclusionsWindow : Window
     static StackPanel ActionEditor(ExclusionRule rule, Action changed)
     {
         var action = new ComboBox { Width = 170, VerticalAlignment = VerticalAlignment.Center };
-        foreach (var a in Actions) action.Items.Add(Loc.T("exa." + a));
+        foreach (var a in Actions) action.Items.Add(ActionItem(a));
         action.SelectedIndex = Array.IndexOf(Actions, rule.Action);
 
         var color = new ColorPickButton { Color = rule.Color, Margin = new Thickness(8, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
