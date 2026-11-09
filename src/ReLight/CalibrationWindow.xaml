@@ -1,0 +1,118 @@
+<Window x:Class="ReLight.CalibrationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:ReLight.Controls"
+        Title="ReLight"
+        Background="#111111"
+        Foreground="{DynamicResource Rl.Text.Primary}"
+        FontFamily="{StaticResource Rl.Font}"
+        FontSize="13"
+        UseLayoutRounding="True">
+    <Grid>
+        <!-- Тестовая картинка во весь экран -->
+        <c:LayoutPicture x:Name="Picture"/>
+
+        <!-- Панель настройки по центру экрана -->
+        <Border Style="{StaticResource Rl.Card}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Padding="26,20,26,18" Margin="0" Width="600">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.6"/>
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="{DynamicResource Loc.cal.title}" FontSize="18" FontWeight="SemiBold"/>
+                <TextBlock Style="{StaticResource Rl.Muted}" Margin="0,6,0,16" Text="{DynamicResource Loc.cal.hint}"/>
+
+                <!-- Количество по сторонам -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="#FF0000" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Style="{StaticResource Rl.Muted}" Text="{DynamicResource Loc.cal.top}"/>
+                        </StackPanel>
+                        <c:NumberSpinner x:Name="TopBox" Width="Auto" Maximum="500"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="#00FF00" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Style="{StaticResource Rl.Muted}" Text="{DynamicResource Loc.cal.right}"/>
+                        </StackPanel>
+                        <c:NumberSpinner x:Name="RightBox" Width="Auto" Maximum="500"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="#0000FF" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Style="{StaticResource Rl.Muted}" Text="{DynamicResource Loc.cal.bottom}"/>
+                        </StackPanel>
+                        <c:NumberSpinner x:Name="BottomBox" Width="Auto" Maximum="500"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Rectangle Width="10" Height="10" RadiusX="2" RadiusY="2" Fill="#FFFF00" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Style="{StaticResource Rl.Muted}" Text="{DynamicResource Loc.cal.left}"/>
+                        </StackPanel>
+                        <c:NumberSpinner x:Name="LeftBox" Width="Auto" Maximum="500"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Начало, направление, сдвиг, порядок цветов -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Style="{StaticResource Rl.FieldLabel}" Text="{DynamicResource Loc.cal.start}"/>
+                    <ComboBox x:Name="StartBox" Grid.Column="1" Margin="0,0,0,8"/>
+                    <TextBlock Grid.Row="1" Style="{StaticResource Rl.FieldLabel}" Text="{DynamicResource Loc.cal.dir}"/>
+                    <ComboBox x:Name="DirBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,8"/>
+                    <TextBlock Grid.Row="2" Style="{StaticResource Rl.FieldLabel}" Text="{DynamicResource Loc.cal.offset}"/>
+                    <c:NumberSpinner x:Name="OffsetBox" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"
+                                     Minimum="-1000" Maximum="1000" Margin="0,0,0,8"/>
+                    <TextBlock Grid.Row="3" Style="{StaticResource Rl.FieldLabel}" Text="{DynamicResource Loc.device.order}"/>
+                    <ComboBox x:Name="OrderBox" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" Width="120"/>
+                </Grid>
+
+                <!-- Итог и автораскладка -->
+                <Border Margin="0,16,0,0" Padding="0,14,0,0" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource Rl.Border}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="TotalText" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource Rl.Accent}"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource Rl.FieldLabel}" Margin="0,0,8,0" Text="{DynamicResource Loc.cal.spread.label}"/>
+                            <c:NumberSpinner x:Name="SpreadBox" Minimum="1" Maximum="2000" Margin="0,0,8,0"/>
+                            <Button Style="{StaticResource Rl.Button}" Content="{DynamicResource Loc.cal.spread}" Click="Spread_Click" MinHeight="32" Padding="12,4"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid Margin="0,18,0,0">
+                    <TextBlock Style="{StaticResource Rl.Muted}" FontSize="11" VerticalAlignment="Center" Text="{DynamicResource Loc.cal.keys}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource Rl.Button}" Content="{DynamicResource Loc.cal.cancel}" MinWidth="110" Margin="0,0,10,0" Click="Cancel_Click"/>
+                        <Button Style="{StaticResource Rl.Button.Accent}" MinWidth="130" Click="Done_Click">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource Rl.Icon}" Text="&#xE73E;" Margin="0,0,8,0" Foreground="{DynamicResource Rl.Accent}"/>
+                                <TextBlock Text="{DynamicResource Loc.cal.done}" Foreground="{DynamicResource Rl.Accent}"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

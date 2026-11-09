@@ -1,0 +1,92 @@
+<Window x:Class="ReLight.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="{DynamicResource Loc.about.title}"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        Width="400"
+        SizeToContent="Height"
+        UseLayoutRounding="True"
+        Background="{DynamicResource Rl.Window.Background}"
+        Foreground="{DynamicResource Rl.Text.Primary}"
+        FontFamily="{StaticResource Rl.Font}"
+        FontSize="13">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="0" GlassFrameThickness="0"
+                            CornerRadius="0" UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <!-- То же окно «О программе», что у ReFlow -->
+    <Border BorderBrush="{DynamicResource Rl.Border}" BorderThickness="1">
+        <DockPanel>
+            <Border DockPanel.Dock="Top" Height="44"
+                    Background="{DynamicResource Rl.Surface}"
+                    BorderBrush="{DynamicResource Rl.Border}" BorderThickness="0,0,0,1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,8,0">
+                        <Image x:Name="TitleBarIcon" Width="30" Height="30" Margin="0,0,10,0"
+                               Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant"/>
+                        <TextBlock Text="{DynamicResource Loc.about.title}" VerticalAlignment="Center"
+                                   FontSize="13" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Style="{StaticResource Rl.TitleBar.Close}" Content="&#x00D7;"
+                            ToolTip="{DynamicResource Loc.tip.close}" AutomationProperties.Name="{DynamicResource Loc.tip.close}" Click="Close_Click"/>
+                </Grid>
+            </Border>
+
+            <Border Padding="20,18,20,16">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Text="{DynamicResource Loc.about.text}"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <TextBlock Foreground="{DynamicResource Rl.Text.Muted}" Text="{DynamicResource Loc.about.version}"/>
+                        <TextBlock x:Name="VersionText" Foreground="{DynamicResource Rl.Text.Muted}"/>
+                    </StackPanel>
+
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,12,0">
+                            <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource Rl.Accent.Dim}"
+                                       Text="{DynamicResource Loc.about.author}"/>
+                            <TextBlock Margin="0,8,0,0" TextWrapping="Wrap">
+                                <Run Foreground="{DynamicResource Rl.Accent.Dim}" Text="{DynamicResource Loc.about.donate.prefix}"/><Hyperlink
+                                    NavigateUri="https://boosty.to/dcsrus/donate" Style="{StaticResource Rl.About.DonateLink}"
+                                    RequestNavigate="Link_RequestNavigate"><Run Text="{DynamicResource Loc.about.donate.link}"/></Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Style="{StaticResource Rl.About.SocialLink}" Tag="https://t.me/mihail_krylov"
+                                    ToolTip="{DynamicResource Loc.about.telegram}" AutomationProperties.Name="{DynamicResource Loc.about.telegram}" Click="Social_Click">
+                                <Viewbox Width="28" Height="28">
+                                    <Path Fill="{DynamicResource Rl.Text.Primary}"
+                                          Data="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0h-.056zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                                </Viewbox>
+                            </Button>
+                            <Button Margin="8,0,0,0" Style="{StaticResource Rl.About.SocialLink}" Tag="https://github.com/dinosmike"
+                                    ToolTip="{DynamicResource Loc.about.github}" AutomationProperties.Name="{DynamicResource Loc.about.github}" Click="Social_Click">
+                                <Viewbox Width="28" Height="28">
+                                    <Path Fill="{DynamicResource Rl.Text.Primary}"
+                                          Data="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                                </Viewbox>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <Button MinWidth="100" Margin="0,20,0,0" HorizontalAlignment="Right" Padding="16,8"
+                            Style="{StaticResource Rl.Button.Accent}" Content="{DynamicResource Loc.about.ok}"
+                            IsDefault="True" IsCancel="True" Click="Close_Click"/>
+                </StackPanel>
+            </Border>
+        </DockPanel>
+    </Border>
+</Window>

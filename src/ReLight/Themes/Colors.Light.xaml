@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System.Windows;assembly=PresentationFramework">
+    <!-- Светлая тема: та же палитра, что у ReSwitch -->
+    <Color x:Key="Rl.Color.Background">#F4F5F7</Color>
+    <Color x:Key="Rl.Color.Surface">#FFFFFF</Color>
+    <Color x:Key="Rl.Color.Border">#D1D5DB</Color>
+    <Color x:Key="Rl.Color.TextPrimary">#111827</Color>
+    <Color x:Key="Rl.Color.TextMuted">#6B7280</Color>
+    <Color x:Key="Rl.Color.Accent">#0D9488</Color>
+
+    <SolidColorBrush x:Key="Rl.Window.Background" Color="#F4F5F7"/>
+    <SolidColorBrush x:Key="Rl.Surface" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Rl.Input" Color="#F9FAFB"/>
+    <SolidColorBrush x:Key="Rl.Border" Color="#D1D5DB"/>
+    <SolidColorBrush x:Key="Rl.Text.Primary" Color="#111827"/>
+    <SolidColorBrush x:Key="Rl.Text.Muted" Color="#6B7280"/>
+    <SolidColorBrush x:Key="Rl.Accent" Color="#0D9488"/>
+    <SolidColorBrush x:Key="Rl.Accent.Dim" Color="#0F766E"/>
+    <SolidColorBrush x:Key="Rl.Button.Accent.Background" Color="#ECFDF5"/>
+    <SolidColorBrush x:Key="Rl.Button.PressedBackground" Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="Rl.Hover" Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="Rl.Pressed" Color="#D1D5DB"/>
+    <SolidColorBrush x:Key="Rl.Track" Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="Rl.Check.Background" Color="#CCFBF1"/>
+    <SolidColorBrush x:Key="Rl.Close.Hover" Color="#E81123"/>
+    <SolidColorBrush x:Key="Rl.Close.Pressed" Color="#C50F1F"/>
+    <SolidColorBrush x:Key="Rl.Close.Foreground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="Rl.Status.Good" Color="#16A34A"/>
+    <SolidColorBrush x:Key="Rl.Status.Warn" Color="#B7791F"/>
+    <SolidColorBrush x:Key="Rl.Status.Bad" Color="#DC2626"/>
+    <SolidColorBrush x:Key="Rl.Status.Idle" Color="#9CA3AF"/>
+    <SolidColorBrush x:Key="Rl.Preview.Screen" Color="#1F2937"/>
+
+    <SolidColorBrush x:Key="{x:Static sys:SystemColors.WindowBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static sys:SystemColors.WindowTextBrushKey}" Color="#111827"/>
+    <SolidColorBrush x:Key="{x:Static sys:SystemColors.HighlightBrushKey}" Color="#E5E7EB"/>
+    <SolidColorBrush x:Key="{x:Static sys:SystemColors.HighlightTextBrushKey}" Color="#111827"/>
+    <SolidColorBrush x:Key="{x:Static sys:SystemColors.ControlBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static sys:SystemColors.ControlDarkBrushKey}" Color="#D1D5DB"/>
+</ResourceDictionary>

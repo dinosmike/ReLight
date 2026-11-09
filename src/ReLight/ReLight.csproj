@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- WinForms only for Screen (monitor list) and, later, the tray icon. -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- WinForms analyzer wants DPI in code; this is a WPF app, the manifest is the right place. -->
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <AssemblyName>ReLight</AssemblyName>
+    <RootNamespace>ReLight</RootNamespace>
+    <Version>1.0.0</Version>
+    <Product>ReLight</Product>
+    <Description>Ambient backlight controller for Adalight LED strips</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WinForms and WPF have many same-named types; keep WinForms out of the global namespace. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="ReLight.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="Vortice.Direct3D11" Version="2.4.2" />
+    <PackageReference Include="Vortice.DXGI" Version="2.4.2" />
+  </ItemGroup>
+
+</Project>

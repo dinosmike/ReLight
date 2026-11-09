@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2A85A5B-682B-448E-9444-3F00EC4FC899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReLight", "src\ReLight\ReLight.csproj", "{D95FE277-AEE0-4D9D-B3F5-3E6D6826EEED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9769F6B2-C3EA-4E6C-ADDA-93F6BA4871CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReLight.Tests", "tests\ReLight.Tests\ReLight.Tests.csproj", "{7910C227-3866-4501-B00B-8C8C5981E3C3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D95FE277-AEE0-4D9D-B3F5-3E6D6826EEED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95FE277-AEE0-4D9D-B3F5-3E6D6826EEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95FE277-AEE0-4D9D-B3F5-3E6D6826EEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95FE277-AEE0-4D9D-B3F5-3E6D6826EEED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7910C227-3866-4501-B00B-8C8C5981E3C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7910C227-3866-4501-B00B-8C8C5981E3C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7910C227-3866-4501-B00B-8C8C5981E3C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7910C227-3866-4501-B00B-8C8C5981E3C3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D95FE277-AEE0-4D9D-B3F5-3E6D6826EEED} = {B2A85A5B-682B-448E-9444-3F00EC4FC899}
+		{7910C227-3866-4501-B00B-8C8C5981E3C3} = {9769F6B2-C3EA-4E6C-ADDA-93F6BA4871CF}
+	EndGlobalSection
+EndGlobal

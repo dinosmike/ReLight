@@ -1,0 +1,63 @@
+<Window x:Class="ReLight.DotTestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:ReLight.Controls"
+        Title="ReLight"
+        Background="#050505"
+        Foreground="{DynamicResource Rl.Text.Primary}"
+        FontFamily="{StaticResource Rl.Font}"
+        FontSize="13"
+        UseLayoutRounding="True">
+    <Grid>
+        <Border Style="{StaticResource Rl.Card}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Padding="26,20,26,18" Margin="0" Width="560">
+            <StackPanel>
+                <TextBlock Text="{DynamicResource Loc.dot.title}" FontSize="18" FontWeight="SemiBold"/>
+                <TextBlock Style="{StaticResource Rl.Muted}" Margin="0,6,0,18" Text="{DynamicResource Loc.dot.hint}"/>
+
+                <!-- Номер светодиода крупно, как цифры в ReQuit -->
+                <Border HorizontalAlignment="Center" Padding="34,10" CornerRadius="10" BorderThickness="1"
+                        BorderBrush="{DynamicResource Rl.Accent.Dim}" Background="{DynamicResource Rl.Button.Accent.Background}">
+                    <TextBlock x:Name="NumberText" FontSize="44" FontWeight="SemiBold" FontFamily="Consolas"
+                               Foreground="{DynamicResource Rl.Accent}" HorizontalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                    <Button Style="{StaticResource Rl.Button}" MinWidth="120" Margin="0,0,10,0" Focusable="False"
+                            PreviewMouseLeftButtonDown="Back_Down" PreviewMouseLeftButtonUp="Hold_Up" LostMouseCapture="Hold_Lost">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource Rl.Icon}" Text="&#xE76B;" Margin="0,0,8,0"/>
+                            <TextBlock Text="{DynamicResource Loc.dot.back}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource Rl.Button}" MinWidth="120" Focusable="False"
+                            PreviewMouseLeftButtonDown="Next_Down" PreviewMouseLeftButtonUp="Hold_Up" LostMouseCapture="Hold_Lost">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{DynamicResource Loc.dot.next}"/>
+                            <TextBlock Style="{StaticResource Rl.Icon}" Text="&#xE76C;" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                    <CheckBox x:Name="AutoBox" Content="{DynamicResource Loc.dot.auto}" VerticalAlignment="Center" Margin="0,0,24,0" Focusable="False"/>
+                    <TextBlock Style="{StaticResource Rl.FieldLabel}" Margin="0,0,8,0" Text="{DynamicResource Loc.dot.max}"/>
+                    <c:NumberSpinner x:Name="MaxBox" Minimum="10" Maximum="2000"/>
+                </StackPanel>
+
+                <Grid Margin="0,20,0,0">
+                    <TextBlock Style="{StaticResource Rl.Muted}" FontSize="11" VerticalAlignment="Center" Text="{DynamicResource Loc.dot.keys}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource Rl.Button}" Content="{DynamicResource Loc.dot.close}" MinWidth="100" Margin="0,0,10,0" Click="Close_Click" Focusable="False"/>
+                        <Button Style="{StaticResource Rl.Button.Accent}" MinWidth="150" Click="Last_Click" Focusable="False">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource Rl.Icon}" Text="&#xE73E;" Margin="0,0,8,0" Foreground="{DynamicResource Rl.Accent}"/>
+                                <TextBlock Text="{DynamicResource Loc.dot.last}" Foreground="{DynamicResource Rl.Accent}"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
