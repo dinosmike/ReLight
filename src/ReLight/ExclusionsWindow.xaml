@@ -125,18 +125,19 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
+                            <!-- Equal fixed rows: the color square is taller than a bare combo box, so Auto rows would differ -->
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="46"/>
+                                <RowDefinition Height="46"/>
+                                <RowDefinition Height="46"/>
                             </Grid.RowDefinitions>
                             <CheckBox x:Name="UnityBox" Content="{DynamicResource Loc.ex.unity}" VerticalAlignment="Center" Click="Engine_Click"/>
-                            <ContentControl x:Name="UnityEditor" Grid.Column="1" Margin="0,0,0,8"/>
+                            <ContentControl x:Name="UnityEditor" Grid.Column="1" VerticalAlignment="Center"/>
                             <CheckBox x:Name="UnrealBox" Grid.Row="1" Content="{DynamicResource Loc.ex.unreal}" VerticalAlignment="Center" Click="Engine_Click"/>
-                            <ContentControl x:Name="UnrealEditor" Grid.Row="1" Grid.Column="1" Margin="0,0,0,8"/>
+                            <ContentControl x:Name="UnrealEditor" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
                             <CheckBox x:Name="PlayersBox" Grid.Row="2" Content="{DynamicResource Loc.ex.players}" VerticalAlignment="Center"
                                       ToolTip="{DynamicResource Loc.ex.players.tip}" Click="Engine_Click"/>
-                            <ContentControl x:Name="PlayersEditor" Grid.Row="2" Grid.Column="1"/>
+                            <ContentControl x:Name="PlayersEditor" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center"/>
                         </Grid>
                         <TextBlock Style="{StaticResource Rl.Muted}" FontSize="11" Margin="0,10,0,0" Text="{DynamicResource Loc.ex.engines.hint}"/>
                     </StackPanel>

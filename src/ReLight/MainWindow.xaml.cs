@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using ReLight.Audio;
@@ -95,6 +96,7 @@ public partial class MainWindow : Window
         _tray = new TrayService(this, _settings);
         _tray.OpenRequested += ShowFromTray;
         _tray.SettingsRequested += () => Settings_Click(this, new RoutedEventArgs()); // alone, the main window stays hidden
+        _tray.ExclusionsRequested += () => Exclusions_Click(this, new RoutedEventArgs()); // the same: alone when hidden
         _tray.ExitRequested += ExitApp;
         _tray.ToggleRequested += () => SetLight(!_settings.LightOn);
         _tray.ModeRequested += SetMode;
@@ -596,10 +598,23 @@ public partial class MainWindow : Window
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     static extern bool UnhookWinEvent(IntPtr hook);
 
+    ExclusionsWindow? _exclusionsWindow;
+
     void Exclusions_Click(object sender, RoutedEventArgs e)
     {
+        if (_exclusionsWindow != null) { _exclusionsWindow.Activate(); return; } // already open (from the tray again)
         // Changes work at once (the window calls back after each one); Cancel puts the old ones back.
-        var window = new ExclusionsWindow(_settings) { Owner = this };
+        var window = new ExclusionsWindow(_settings);
+        // Over the main window when it is on screen; from the tray with the window hidden, on its own.
+        if (!IsVisible || WindowState == WindowState.Minimized)
+        {
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.ShowInTaskbar = true;
+        }
+        else
+            window.Owner = this;
+        _exclusionsWindow = window;
+        window.Closed += (_, _) => _exclusionsWindow = null;
         window.Applied += ScanExclusions;
         if (window.ShowDialog() == true) _settings.Save();
         ScanExclusions();
@@ -919,17 +934,113 @@ public partial class MainWindow : Window
 
     void About_Click(object sender, RoutedEventArgs e) => AboutWindow.ShowFor(this);
 
-    void ToTray_Click(object sender, RoutedEventArgs e) => Hide();
+    void ToTray_Click(object sender, RoutedEventArgs e) => HideToTray();
 
     void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
     void Close_Click(object sender, RoutedEventArgs e) => Close();
 
+    // ---------- flying to the tray and back ----------
+
+    const int TrayFlyMs = 400;
+    const double TrayFlyEndScale = 0.14;
+    bool _trayAnimating;
+
+    /// <summary>Slides the window down towards the tray corner while it fades, then hides it.</summary>
+    void HideToTray()
+    {
+        if (_trayAnimating) return;
+        if (!IsVisible || WindowState == WindowState.Minimized) { Hide(); return; }
+        _trayAnimating = true;
+        double left = Left, top = Top;
+        var (endLeft, endTop) = TrayFlyTarget(left, top);
+        var sb = TrayFlight(left, endLeft, top, endTop, Opacity, 0, TrayFlyEndScale, new CubicEase { EasingMode = EasingMode.EaseIn });
+        sb.Completed += (_, _) =>
+        {
+            EndTrayFlight(sb, left, top);
+            Hide();
+        };
+        sb.Begin(this, true);
+    }
+
     public void ShowFromTray()
     {
+        if (IsVisible || _trayAnimating)
+        {
+            if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
+            Activate();
+            return;
+        }
+        // The way back: from the tray corner to where the window was.
+        _trayAnimating = true;
+        double left = Left, top = Top;
+        var (startLeft, startTop) = TrayFlyTarget(left, top);
+        Left = startLeft;
+        Top = startTop;
+        Opacity = 0;
         Show();
-        if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
-        Activate();
+        WindowState = WindowState.Normal;
+        var sb = TrayFlight(startLeft, left, startTop, top, 0, 1, 1, new CubicEase { EasingMode = EasingMode.EaseOut });
+        sb.Completed += (_, _) =>
+        {
+            EndTrayFlight(sb, left, top);
+            Activate();
+        };
+        sb.Begin(this, true);
+    }
+
+    Storyboard TrayFlight(double fromLeft, double toLeft, double fromTop, double toTop, double fromOpacity, double toOpacity,
+        double toScale, IEasingFunction easing)
+    {
+        var duration = TimeSpan.FromMilliseconds(TrayFlyMs);
+        var sb = new Storyboard();
+        void Add(DependencyObject target, DependencyProperty property, double from, double to)
+        {
+            var animation = new DoubleAnimation(from, to, duration) { EasingFunction = easing };
+            Storyboard.SetTarget(animation, target);
+            Storyboard.SetTargetProperty(animation, new PropertyPath(property));
+            sb.Children.Add(animation);
+        }
+        Add(this, LeftProperty, fromLeft, toLeft);
+        Add(this, TopProperty, fromTop, toTop);
+        Add(this, OpacityProperty, fromOpacity, toOpacity);
+        Add(TrayHideScale, ScaleTransform.ScaleXProperty, TrayHideScale.ScaleX, toScale);
+        Add(TrayHideScale, ScaleTransform.ScaleYProperty, TrayHideScale.ScaleY, toScale);
+        return sb;
+    }
+
+    /// <summary>Drops the animations and puts the window back in place, whole and opaque.</summary>
+    void EndTrayFlight(Storyboard sb, double left, double top)
+    {
+        sb.Remove(this);
+        BeginAnimation(LeftProperty, null);
+        BeginAnimation(TopProperty, null);
+        BeginAnimation(OpacityProperty, null);
+        TrayHideScale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+        TrayHideScale.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+        Left = left;
+        Top = top;
+        Opacity = 1;
+        TrayHideScale.ScaleX = TrayHideScale.ScaleY = 1;
+        _trayAnimating = false;
+    }
+
+    /// <summary>Where the window flies: the bottom of the work area, a third of the way towards its right corner.</summary>
+    (double Left, double Top) TrayFlyTarget(double left, double top)
+    {
+        double w = ActualWidth > 0 ? ActualWidth : Width, h = ActualHeight > 0 ? ActualHeight : Height;
+        var area = SystemParameters.WorkArea;
+        try
+        {
+            var screen = System.Windows.Forms.Screen.FromHandle(new WindowInteropHelper(this).EnsureHandle()).WorkingArea;
+            if (PresentationSource.FromVisual(this)?.CompositionTarget is { } target)
+            {
+                var corner = target.TransformFromDevice.Transform(new Point(screen.Right, screen.Bottom));
+                area = new Rect(0, 0, corner.X, corner.Y);
+            }
+        }
+        catch { } // the primary work area then
+        return (left + (area.Right - w - left) * 0.38, area.Bottom - h);
     }
 
     void ExitApp()
@@ -943,7 +1054,7 @@ public partial class MainWindow : Window
         if (!_exiting && _settings.CloseToTray)
         {
             e.Cancel = true;
-            Hide();
+            HideToTray();
             return;
         }
         Loc.Changed -= ApplyTexts;

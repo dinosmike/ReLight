@@ -22,6 +22,7 @@ public sealed class TrayService : IDisposable
 
     public event Action? OpenRequested;
     public event Action? SettingsRequested;
+    public event Action? ExclusionsRequested;
     public event Action? ExitRequested;
     public event Action? ToggleRequested;
     public event Action<LightMode>? ModeRequested;
@@ -56,6 +57,7 @@ public sealed class TrayService : IDisposable
         var menu = new ContextMenu();
         menu.Items.Add(Item(Loc.T("tray.open"), () => OpenRequested?.Invoke()));
         menu.Items.Add(Item(Loc.T("tip.settings"), () => SettingsRequested?.Invoke()));
+        menu.Items.Add(Item(Loc.T("ex.button"), () => ExclusionsRequested?.Invoke()));
         menu.Items.Add(new Separator());
         // The item says what a click does; its dot shows the state now: green lit, red off.
         var power = Item(Loc.T(_settings.LightOn ? "tray.light.off" : "tray.light.on"), () => ToggleRequested?.Invoke());

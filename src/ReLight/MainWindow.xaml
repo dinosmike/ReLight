@@ -15,6 +15,9 @@
         FontFamily="{StaticResource Rl.Font}"
         FontSize="13"
         UseLayoutRounding="True">
+    <Window.RenderTransform>
+        <ScaleTransform x:Name="TrayHideScale" ScaleX="1" ScaleY="1"/>
+    </Window.RenderTransform>
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="44" ResizeBorderThickness="0" GlassFrameThickness="0"
                             CornerRadius="0" UseAeroCaptionButtons="False"/>

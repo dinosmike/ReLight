@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -14,7 +14,7 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
     <AssemblyName>ReLight</AssemblyName>
     <RootNamespace>ReLight</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <Product>ReLight</Product>
     <Description>Ambient backlight controller for Adalight LED strips</Description>
   </PropertyGroup>
