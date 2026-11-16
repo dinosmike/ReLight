@@ -65,4 +65,13 @@ public partial class AboutWindow : Window
     }
 
     void Close_Click(object sender, RoutedEventArgs e) => Close();
+
+    /// <summary>Hidden: right-click on OK shows GitHub download and auto-update counters.</summary>
+    async void Ok_RightClick(object sender, MouseButtonEventArgs e)
+    {
+        e.Handled = true;
+        DownloadStatsText.Text = "…";
+        DownloadStatsText.Visibility = Visibility.Visible;
+        DownloadStatsText.Text = await ReUpdate.DownloadStats.LoadTextAsync();
+    }
 }
