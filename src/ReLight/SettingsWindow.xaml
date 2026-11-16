@@ -82,7 +82,8 @@
                             <TextBlock Style="{StaticResource Rl.SectionTitle}" Text="{DynamicResource Loc.settings.sec.start}"/>
                             <CheckBox x:Name="AutostartBox" Content="{DynamicResource Loc.settings.autostart}" Margin="0,0,0,10"/>
                             <CheckBox x:Name="StartMinBox" Content="{DynamicResource Loc.settings.startMin}" Margin="0,0,0,10"/>
-                            <CheckBox x:Name="CloseTrayBox" Content="{DynamicResource Loc.settings.closeTray}"/>
+                            <CheckBox x:Name="CloseTrayBox" Content="{DynamicResource Loc.settings.closeTray}" Margin="0,0,0,10"/>
+                            <CheckBox x:Name="AutoUpdateBox" Content="{DynamicResource Loc.settings.autoUpdate}"/>
                         </StackPanel>
                     </Border>
 

@@ -14,7 +14,7 @@ public partial class SettingsWindow : Window
     static readonly int[] BaudRates = [57600, 115200, 230400, 250000, 460800, 500000, 921600, 1000000];
 
     readonly AppSettings _settings;
-    readonly (string language, bool autostart, bool startMin, bool closeTray, string theme, int baud, string order, int fps, int depth) _before;
+    readonly (string language, bool autostart, bool startMin, bool closeTray, bool autoUpdate, string theme, int baud, string order, int fps, int depth) _before;
     bool _loading = true, _saved;
 
     /// <summary>Called after every change.</summary>
@@ -33,6 +33,7 @@ public partial class SettingsWindow : Window
         AutostartBox.IsChecked = AutostartService.IsEnabled();
         StartMinBox.IsChecked = settings.StartMinimized;
         CloseTrayBox.IsChecked = settings.CloseToTray;
+        AutoUpdateBox.IsChecked = settings.AutoUpdate;
 
         ThemeSystem.IsChecked = settings.Theme is not ("dark" or "light");
         ThemeDark.IsChecked = settings.Theme == "dark";
@@ -48,14 +49,14 @@ public partial class SettingsWindow : Window
         ToggleKeyBox.Shortcut = settings.HotkeyToggle;
         ModeKeyBox.Shortcut = settings.HotkeyNextMode;
 
-        _before = (settings.Language, AutostartBox.IsChecked == true, settings.StartMinimized, settings.CloseToTray,
+        _before = (settings.Language, AutostartBox.IsChecked == true, settings.StartMinimized, settings.CloseToTray, settings.AutoUpdate,
             settings.Theme, settings.BaudRate, settings.ColorOrder, settings.ScreenFps, settings.CaptureDepth);
         _loading = false;
 
         LanguageBox.SelectionChanged += (_, _) => Apply();
         BaudBox.SelectionChanged += (_, _) => Apply();
         OrderBox.SelectionChanged += (_, _) => Apply();
-        foreach (var box in new[] { AutostartBox, StartMinBox, CloseTrayBox }) box.Click += (_, _) => Apply();
+        foreach (var box in new[] { AutostartBox, StartMinBox, CloseTrayBox, AutoUpdateBox }) box.Click += (_, _) => Apply();
         foreach (var radio in new[] { ThemeSystem, ThemeDark, ThemeLight }) radio.Checked += (_, _) => Apply();
         FpsBox.ValueChanged += (_, _) => Apply();
         DepthBox.ValueChanged += (_, _) => Apply();
@@ -70,6 +71,7 @@ public partial class SettingsWindow : Window
         if (autostart != AutostartService.IsEnabled()) AutostartService.SetEnabled(autostart);
         _settings.StartMinimized = StartMinBox.IsChecked == true;
         _settings.CloseToTray = CloseTrayBox.IsChecked == true;
+        _settings.AutoUpdate = AutoUpdateBox.IsChecked == true;
         _settings.Theme = ThemeDark.IsChecked == true ? "dark" : ThemeLight.IsChecked == true ? "light" : "system";
         if (BaudBox.SelectedItem is int baud) _settings.BaudRate = baud;
         if (OrderBox.SelectedItem is string order) _settings.ColorOrder = order;
@@ -85,6 +87,7 @@ public partial class SettingsWindow : Window
         if (b.autostart != AutostartService.IsEnabled()) AutostartService.SetEnabled(b.autostart);
         _settings.StartMinimized = b.startMin;
         _settings.CloseToTray = b.closeTray;
+        _settings.AutoUpdate = b.autoUpdate;
         _settings.Theme = b.theme;
         _settings.BaudRate = b.baud;
         _settings.ColorOrder = b.order;

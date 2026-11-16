@@ -34,6 +34,16 @@ public partial class App : Application
             return;
         }
 
+        // Модуль ReUpdate: автообновление с GitHub и «Что нового» (см. ReUpdate\КАК ПОДКЛЮЧИТЬ.md).
+        ReUpdate.ReUpdateConfig.Owner = "dinosmike";
+        ReUpdate.ReUpdateConfig.Repo = "ReLight";
+        ReUpdate.ReUpdateConfig.AssetName = "ReLight.exe";
+        ReUpdate.ReUpdateConfig.AppDataFolderName = "ReLight";
+        ReUpdate.ReUpdateConfig.Language = () => Core.Loc.Language;
+        ReUpdate.ReUpdateConfig.AutoUpdateEnabled = () => AppSettings.Load().AutoUpdate;
+        ReUpdate.Updater.CleanupAfterUpdate();
+        ReUpdate.WhatsNewState.Initialize();
+
         // For screenshots of windows that are not in front (tests, documentation): draw without the video card.
         if (Environment.GetEnvironmentVariable("RELIGHT_SOFTWARE_RENDER") == "1")
             System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
@@ -59,6 +69,8 @@ public partial class App : Application
             while (signal.WaitOne())
                 Dispatcher.BeginInvoke(window.ShowFromTray);
         }) { IsBackground = true, Name = "ReLight show signal" }.Start();
+
+        ReUpdate.Updater.Start();
     }
 
     /// <summary>Keep the details for a bug report: %APPDATA%\ReLight\crash.log.</summary>

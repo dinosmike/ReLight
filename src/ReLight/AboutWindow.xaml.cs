@@ -15,7 +15,16 @@ public partial class AboutWindow : Window
         VersionText.Text = " " + typeof(App).Assembly.GetName().Version?.ToString(2);
         TitleBarIcon.Source = LargestIconFrame();
         MouseLeftButtonDown += (_, e) => { if (e.ButtonState == MouseButtonState.Pressed) DragMove(); };
+
+        UpdateWhatsNewDot();
+        ReUpdate.WhatsNewState.Changed += UpdateWhatsNewDot;
+        Closed += (_, _) => ReUpdate.WhatsNewState.Changed -= UpdateWhatsNewDot;
     }
+
+    void UpdateWhatsNewDot() =>
+        WhatsNewDotAbout.Visibility = ReUpdate.WhatsNewState.HasUnseen ? Visibility.Visible : Visibility.Collapsed;
+
+    void WhatsNew_Click(object sender, RoutedEventArgs e) => ReUpdate.WhatsNewWindow.ShowFor(this);
 
     public static void ShowFor(Window owner)
     {

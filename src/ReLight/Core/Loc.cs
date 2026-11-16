@@ -282,6 +282,7 @@ public static class Loc
         ["settings.autostart"] = ("Запускать ReLight при старте Windows", "Start ReLight with Windows"),
         ["settings.startMin"] = ("Сворачивать в трей при запуске", "Minimize to tray on start"),
         ["settings.closeTray"] = ("Сворачивать в трей даже при закрытии окна ✕", "Minimize to tray even when closing with ✕"),
+        ["settings.autoUpdate"] = ("Проверять обновления", "Check for updates"),
         ["settings.sec.theme"] = ("ТЕМА", "THEME"),
         ["settings.theme.system"] = ("Как в Windows", "Same as Windows"),
         ["settings.theme.dark"] = ("Тёмная", "Dark"),
@@ -310,6 +311,7 @@ public static class Loc
         ["about.donate.link"] = ("можно здесь", "here"),
         ["about.telegram"] = ("Написать автору в Telegram", "Message the author on Telegram"),
         ["about.github"] = ("Мои программы на GitHub", "My projects on GitHub"),
+        ["about.whatsnew"] = ("Что нового", "What's new"),
         ["about.ok"] = ("OK", "OK"),
     };
 }

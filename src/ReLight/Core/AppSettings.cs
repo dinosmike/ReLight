@@ -210,6 +210,9 @@ public sealed class AppSettings
     public bool StartMinimized { get; set; }
     public bool CloseToTray { get; set; }
 
+    /// <summary>Проверять обновления на GitHub и тихо устанавливать их (модуль ReUpdate).</summary>
+    public bool AutoUpdate { get; set; } = true;
+
     /// <summary>Windows device name of the screen the strip is attached to, e.g. \\.\DISPLAY1.</summary>
     public string? Monitor { get; set; }
 
